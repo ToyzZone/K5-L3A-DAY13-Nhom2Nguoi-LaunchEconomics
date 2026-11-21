@@ -51,7 +51,27 @@ def mo_hinh(runs, reqs, gia_vao=26, gia_ra=130, gia_tool=15, luong_phut=2000,
     - thanh_cong: số yêu cầu có ket_qua == 'thanh_cong'.
     - Các tham số giá/hệ số/max_lan_chay dùng cho Nhiệm vụ B (độ nhạy, giới hạn số lần chạy); giữ mặc định ở A2.
     """
-    raise NotImplementedError('VIẾT Ở ĐÂY')
+    reqs = reqs.copy()
+    runs = runs[runs['request_id'].isin(reqs['request_id'])]
+    if max_lan_chay is not None:
+        # Bỏ lần chạy vượt giới hạn; yêu cầu cần nhiều lần hơn coi như chuyển nhân viên.
+        runs = runs[runs['attempt'] <= max_lan_chay]
+        vuot = reqs['so_lan_chay'] > max_lan_chay
+        reqs.loc[vuot, 'ket_qua'] = 'chuyen_nhan_vien'
+        reqs.loc[vuot, ['phut_xem_lai_simulated', 'phut_lam_lai_simulated']] = 0
+    # Tử số: mọi lần chạy, kể cả lần lỗi.
+    tien_token = runs['tokens_in'] / 1000 * gia_vao + runs['tokens_out'] / 1000 * gia_ra
+    tien_tool = runs['tool_calls'] * gia_tool
+    xem_lai = reqs['phut_xem_lai_simulated'].sum() * luong_phut * he_so_xem_lai
+    lam_lai = reqs['phut_lam_lai_simulated'].sum() * luong_phut * he_so_lam_lai
+    tong = tien_token.sum() + tien_tool.sum() + xem_lai + lam_lai
+    # Mẫu số: chỉ yêu cầu thành công.
+    thanh_cong = (reqs['ket_qua'] == 'thanh_cong').sum()
+    return dict(token=tien_token.sum(), tool=tien_tool.sum(),
+                chay_lai=(tien_token + tien_tool)[runs['attempt'] > 1].sum(),
+                xem_lai=xem_lai, lam_lai=lam_lai, tong=tong,
+                thanh_cong=thanh_cong, cps=tong / thanh_cong,
+                hoa_don_moi_yc=(tien_token.sum() + tien_tool.sum()) / len(reqs))
 
 
 # ---------- Nhiệm vụ D1 · Cỡ mẫu (ntphong4044 phụ trách, xem AGENTS.md) ----------
@@ -68,7 +88,7 @@ if __name__ == '__main__':
     kiem_tra_dap_an_biet_truoc()
     ket_qua = mo_hinh(runs, reqs)
     for ten, gia_tri in ket_qua.items():
-        print(f'{ten:12s} {gia_tri:>14,.0f}')
+        print(f'{ten:15s} {gia_tri:>14,.1f}')
     # TODO CP1 · Nhiệm vụ A3: tính lại theo từng giá trị của cột loai.
     # TODO CP2 · Nhiệm vụ B: đổi từng yếu tố, ghi vào bảng độ nhạy.
     nhiem_vu_D(reqs)  # TODO CP4 · Nhiệm vụ D: viết trong hàm nhiem_vu_D ở trên.

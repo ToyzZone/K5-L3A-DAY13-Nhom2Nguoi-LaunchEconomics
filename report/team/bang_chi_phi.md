@@ -6,26 +6,27 @@ Số tính bằng `src/lab13.py`. Mọi con số tính từ cột `_simulated` g
 
 | Phép thử (p = 0,8) | Kết quả của nhóm |
 | --- | --- |
-| Số lần chạy trung bình, tối đa 2 lần | ... |
-| Số lần chạy trung bình, chạy đến khi đúng | ... |
-| Hệ số chi phí mỗi việc thành công, tối đa 3 lần | ... |
+| Số lần chạy trung bình, tối đa 2 lần | 1,20 · ĐẠT |
+| Số lần chạy trung bình, chạy đến khi đúng | 1,25 · ĐẠT |
+| Hệ số chi phí mỗi việc thành công, tối đa 3 lần | 1,25 · ĐẠT (= 1/p, k triệt tiêu) |
 
 ## A2 · Mô hình chi phí từ trace
 
 | Khoản | Số tiền (đ) | Nguồn | Nhãn |
 | --- | ---: | --- | --- |
-| Token | ... | `logix_runs.csv` | đo từ trace |
-| Tool | ... | `logix_runs.csv` | đo từ trace |
-| Trong đó, phần của lần chạy thứ 2 và 3 | ... | attempt lớn hơn 1 | đo từ trace |
-| Xem lại | ... | `phut_xem_lai_simulated` | simulated |
-| Làm lại | ... | `phut_lam_lai_simulated` | simulated |
-| Tổng chi phí | ... | | |
-| Số việc thành công | ... | `ket_qua` | |
-| Chi phí mỗi việc thành công | ... | | |
-| Hoá đơn token và tool chia cho số yêu cầu | ... | | |
+| Token | 245.585 | `logix_runs.csv` | đo từ trace |
+| Tool (5.600 lần gọi) | 84.000 | `logix_runs.csv` | đo từ trace |
+| Trong đó, phần của lần chạy thứ 2 và 3 | 93.804 | attempt lớn hơn 1 | đo từ trace |
+| Xem lại (890 phút) | 1.780.000 | `phut_xem_lai_simulated` | simulated |
+| Làm lại (1.132 phút) | 2.264.000 | `phut_lam_lai_simulated` | simulated |
+| Tổng chi phí | 4.373.585 | cộng bốn khoản trên | simulated (gồm xem lại, làm lại) |
+| Số việc thành công | 978 | `ket_qua` == `thanh_cong` | đo từ trace |
+| Chi phí mỗi việc thành công | 4.472 | tổng chi phí / 978 | simulated |
+| Hoá đơn token và tool chia cho số yêu cầu | 274,7 | (245.585 + 84.000) / 1.200 | đo từ trace |
 
-- Chi phí mỗi việc thành công gấp bao nhiêu lần "hoá đơn chia số yêu cầu"? ...
-- Khoản nào chiếm tỉ trọng lớn nhất trong tổng chi phí, bao nhiêu phần trăm? ...
+- Chi phí mỗi việc thành công gấp bao nhiêu lần "hoá đơn chia số yêu cầu"? **16,3 lần** (4.472 / 274,7) [simulated]: hoá đơn bỏ qua giờ nhân viên và chia cho cả việc không thành công.
+- So với nhân viên tự làm phải dùng chi phí cả hệ thống, vì 4.472 đ chưa tính 222 yêu cầu không thành công (148 chuyển nhân viên, 74 làm lại) mà nhân viên phải làm thay: (4.373.585 + 222 × 12.000) / 1.200 = **5.865 đ/yêu cầu = 0,49× của 12.000 đ** [simulated], không phải 0,37×.
+- Khoản nào chiếm tỉ trọng lớn nhất trong tổng chi phí, bao nhiêu phần trăm? **Làm lại, 51,8%** [simulated], tiếp theo là xem lại 40,7% [simulated]; giờ nhân viên chiếm 92,5% tổng chi phí, token + tool chỉ 7,5%.
 
 ## A3 · Tách theo loại yêu cầu
 
