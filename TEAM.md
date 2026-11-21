@@ -12,7 +12,7 @@
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
 |   1 | Nguyễn Minh Thông | 2A202603637 | 26ai.thongnm@vinuni.edu.vn | ToyzZone | Người viết code (A, B, E1) · người gắn nhãn 1 · người kiểm số cho D |
-|   2 | Phong (họ tên đầy đủ: chờ điền) | chờ điền | chờ điền | ntphong4044 | Người viết code (D) · người gắn nhãn 2 kiêm giữ hồ sơ · người kiểm số cho A, B |
+|   2 | Nguyễn Tuấn Phong | 2A202603712 | 26ai.phongnt@vinuni.edu.vn | ntphong4044 | Người viết code (D) · người gắn nhãn 2 kiêm giữ hồ sơ · người kiểm số cho A, B |
 
 Bốn vai của lab:
 
@@ -56,7 +56,7 @@ Sao chép mục dưới đây cho từng thành viên.
 - Commit trên `main`: abf393e (A1), 93a11bd (A2), acb4681 (A3, A4), 75e04ba (B), 7a43783 (E1, E2)
 - Báo cáo cá nhân: [report/team/2A202603637_NguyenMinhThong.md](report/team/2A202603637_NguyenMinhThong.md)
 
-## Phong-ntphong4044
+## NguyenTuanPhong-2A202603712
 
 ### Phần việc phụ trách
 
@@ -70,4 +70,4 @@ Sao chép mục dưới đây cho từng thành viên.
 
 ### Bằng chứng
 
-- Phong điền
+- Báo cáo cá nhân: [report/team/2A202603712_NguyenTuanPhong.md](report/team/2A202603712_NguyenTuanPhong.md)
