@@ -74,6 +74,33 @@ def mo_hinh(runs, reqs, gia_vao=26, gia_ra=130, gia_tool=15, luong_phut=2000,
                 hoa_don_moi_yc=(tien_token.sum() + tien_tool.sum()) / len(reqs))
 
 
+# ---------- Nhiệm vụ A3, A4 · Tách theo loại, chi phí cố định ----------
+PHAM_VI = ['noi_dia', 'hang_nang']
+CO_DINH_THANG = 40_000_000
+KHOI_LUONG_THANG = 45_000   # 1.500 yêu cầu/ngày × 30 ngày
+
+
+def nhiem_vu_A3_A4(runs, reqs):
+    print('\nA3 · loai        so_yc  ti_le_tc  lan_chay/yc       cps  /12000  [cps simulated]')
+    for loai, nhom in reqs.groupby('loai'):
+        kq = mo_hinh(runs, nhom)
+        lan_chay = runs['request_id'].isin(nhom['request_id']).sum() / len(nhom)
+        print(f'{loai:15s} {len(nhom):6d} {kq["thanh_cong"] / len(nhom):8.1%} {lan_chay:12.2f}'
+              f' {kq["cps"]:9,.0f} {kq["cps"] / BASELINE:6.2f}x')
+    # Chạy lại có giúp không: tỉ lệ lần chạy ok theo loại và theo lần thử.
+    ok = runs.merge(reqs[['request_id', 'loai']]).assign(ok=lambda d: d['status'] == 'ok')
+    print('\nTỉ lệ ok theo lần thử:')
+    print(ok.pivot_table(index='loai', columns='attempt', values='ok', aggfunc='mean').round(3))
+
+    pv = mo_hinh(runs, reqs[reqs['loai'].isin(PHAM_VI)])
+    print(f'\nA4 · phạm vi {"+".join(PHAM_VI)}: {pv["thanh_cong"]} việc thành công, cps {pv["cps"]:,.0f} [simulated]')
+    for ten, kl in [('đầy đủ', KHOI_LUONG_THANG), ('một nửa', KHOI_LUONG_THANG / 2)]:
+        viec_thang = kl * pv['thanh_cong'] / len(reqs)
+        co_dinh = CO_DINH_THANG / viec_thang
+        print(f'{ten:8s} {kl:8,.0f} yc/tháng  {viec_thang:8,.0f} việc  cố định {co_dinh:6,.0f}'
+              f'  cps+cố định {pv["cps"] + co_dinh:6,.0f} = {(pv["cps"] + co_dinh) / BASELINE:.2f}x')
+
+
 # ---------- Nhiệm vụ D1 · Cỡ mẫu (ntphong4044 phụ trách, xem AGENTS.md) ----------
 # TODO CP4: năm câu D1 và tỉ lệ mo_lai_trong_7_ngay hiện tại; in kết quả.
 #   from statsmodels.stats.proportion import proportion_effectsize
@@ -89,6 +116,6 @@ if __name__ == '__main__':
     ket_qua = mo_hinh(runs, reqs)
     for ten, gia_tri in ket_qua.items():
         print(f'{ten:15s} {gia_tri:>14,.1f}')
-    # TODO CP1 · Nhiệm vụ A3: tính lại theo từng giá trị của cột loai.
+    nhiem_vu_A3_A4(runs, reqs)
     # TODO CP2 · Nhiệm vụ B: đổi từng yếu tố, ghi vào bảng độ nhạy.
     nhiem_vu_D(reqs)  # TODO CP4 · Nhiệm vụ D: viết trong hàm nhiem_vu_D ở trên.
