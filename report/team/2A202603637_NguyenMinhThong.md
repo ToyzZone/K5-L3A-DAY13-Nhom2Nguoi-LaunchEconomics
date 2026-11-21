@@ -49,26 +49,26 @@ Năm loại: Do người dùng · Hệ thống · Ngữ cảnh · Giới hạn h
 
 | Ca | Nhãn |
 | --: | --- |
-| 1 | |
-| 2 | |
-| 3 | |
-| 4 | |
-| 5 | |
-| 6 | |
-| 7 | |
-| 8 | |
-| 9 | |
-| 10 | |
-| 11 | |
-| 12 | |
-| 13 | |
-| 14 | |
-| 15 | |
-| 16 | |
-| 17 | |
-| 18 | |
-| 19 | |
-| 20 | |
+| 1 | Do người dùng |
+| 2 | Ngữ cảnh |
+| 3 | Giới hạn hệ thống |
+| 4 | Giới hạn hệ thống |
+| 5 | Ngầm |
+| 6 | Do người dùng |
+| 7 | Hệ thống |
+| 8 | Ngữ cảnh |
+| 9 | Do người dùng |
+| 10 | Ngữ cảnh |
+| 11 | Giới hạn hệ thống |
+| 12 | Ngầm |
+| 13 | Do người dùng |
+| 14 | Do người dùng |
+| 15 | Hệ thống |
+| 16 | Ngữ cảnh |
+| 17 | Ngầm |
+| 18 | Ngữ cảnh |
+| 19 | Giới hạn hệ thống |
+| 20 | Hệ thống |
 
 ## 5. Công cụ AI đã dùng
 
