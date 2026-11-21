@@ -27,9 +27,9 @@ Dựng hồ sơ launch v0 cho trợ lý hoàn phí LogiX-VN và bảo vệ trư�
 - So với nhân viên tự làm: cả hệ thống 5.865 đ/yêu cầu = 0,49× của 12.000 đ [simulated].
 - Chỉ số đợt chạy thử: chính 82,83%, bỏ qua gợi ý 27,12%, lỗi lọt đến khách 4,25%.
 - Bảng lỗi: đồng thuận 16/20 = 80%; bảng khắc phục 5 ca đủ năm loại.
-- Pilot: chia theo nhân viên 20+20, mde 6 điểm, n 859/nhóm, DE 6,96, 20 cụm/nhóm, 3 luật dừng.
+- Pilot: chia theo nhân viên 20+20, mde 6 điểm, n 859/nhóm, DE 6,96, 20 cụm/nhóm, 4 luật dừng.
 - Đề xuất cuối (`ho_so_launch_v0.md`): Go có điều kiện cho pilot noi_dia + hang_nang.
-- Kết quả duyệt chéo nhận được từ hội đồng: (điền sau buổi duyệt chéo Gate 2a).
+- Kết quả duyệt chéo nhận được từ hội đồng (nhóm OPC): 30/30, Go có điều kiện. Đã sửa theo góp ý của hội đồng: tách luật hoàn trùng (tắt ngay khi có 1 ca) và đặt ngưỡng chênh mở lại theo bước rollout (3,6 · 2,2 · 2 điểm) trong `pilot_plan.yaml`; chuyển điều kiện ký chấp nhận MDE 6 điểm sang trước ngày bắt đầu pilot trong `ho_so_launch_v0.md`.
 
 ## 5. Khó khăn và cách xử lý
 

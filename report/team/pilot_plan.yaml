@@ -21,7 +21,11 @@
 #   nên chọn mức chênh 6 điểm (859 mỗi nhóm). Nếu tác động thật chỉ 5 điểm thì power còn ~0,64.
 #
 # Tỉ lệ mo_lai_trong_7_ngay hiện tại: toàn mẫu 4,25%, phạm vi noi_dia+hang_nang 3,97%.
-#   Không đặt trần tuyệt đối 3% (pilot sẽ bị dừng ngay tuần đầu); dùng so với đối chứng +2 điểm kèm trần 6%.
+#   Không đặt trần tuyệt đối 3% (pilot sẽ bị dừng ngay tuần đầu); dùng so với đối chứng kèm trần 6%.
+#   Ngưỡng chênh theo bước rollout (sửa theo góp ý hội đồng OPC). Cách tính tay:
+#   ngưỡng = 1,645 × √(2 × p(1 − p) × DE / (c × m)), p = 3,97%, m = 215 yêu cầu/người trong 7 ngày (~31/ngày),
+#   DE = 1 + 214 × 0,02 = 5,28 -> c = 4: 3,6 điểm · c = 10: 2,2 điểm · c = 20: 1,6 điểm (giữ 2 điểm, tắt oan ~2% theo mô phỏng).
+#   Chỉ so các yêu cầu đã đủ 7 ngày theo dõi ở cả hai nhóm. Hoàn trùng là luật riêng: ngưỡng 0 ca, tắt ngay.
 
 pilot:
   owner: "Giám đốc vận hành LogiX-VN"
@@ -45,7 +49,8 @@ pilot:
     spillover_risk: "Chia sẻ câu trả lời trong depot; giảm bằng quyền theo tài khoản và log lượt mở theo staff_id"
     predeclared: "Chỉ số chính, ngưỡng, luật dừng và ngày quyết định chốt trước ngày bắt đầu"
   stop_rules:
-    - "NẾU mở lại 7 ngày của nhóm trợ lý cao hơn đối chứng >= 2 điểm hoặc vượt 6%, hoặc có >= 1 ca hoàn trùng TRONG 3 ngày liên tiếp THÌ Giám đốc vận hành tắt trợ lý trong 30 phút KHÔNG THÌ không được sang bước rollout tiếp"
+    - "NẾU có >= 1 ca hoàn trùng (đối soát sổ cái mỗi giờ: cùng request_id có 2 refund_ledger_write ok) TRONG bất kỳ giờ nào của pilot THÌ Giám đốc vận hành tắt trợ lý trong 30 phút từ lúc phát hiện, Kỹ sư trưởng agent thu hồi khoản hoàn thừa trong 24 giờ KHÔNG THÌ không được bật lại trước khi kiểm thử khoá chống trùng đạt"
+    - "NẾU mở lại 7 ngày của nhóm trợ lý (chỉ yêu cầu đủ 7 ngày theo dõi) vượt 6%, hoặc cao hơn đối chứng >= 3,6 điểm ở bước 4 người, >= 2,2 điểm ở bước 10 người, >= 2 điểm ở bước 20 người TRONG 7 ngày cộng dồn THÌ Giám đốc vận hành tắt trợ lý trong 30 phút; chênh >= 2 điểm ở bước 4 hoặc 10 người thì PM trợ lý hoàn phí đọc toàn bộ trace mở lại trong 2 ngày KHÔNG THÌ không được sang bước rollout tiếp"
     - "NẾU chi phí mỗi việc thành công > 8.000 đ [simulated] TRONG 2 tuần liên tiếp THÌ PM trợ lý hoàn phí thu hẹp về noi_dia và giới hạn 2 lần chạy KHÔNG THÌ không được mở hang_nang"
     - "NẾU tỉ lệ bỏ qua gợi ý > 40% TRONG 1 tuần THÌ Trưởng nhóm CSKH phỏng vấn 5 nhân viên trong 3 ngày KHÔNG THÌ không được chuyển bước rollout"
   interim_looks: "chỉ kiểm tra chỉ số an toàn"
