@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Label Tool · Lab 13</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #e3e1dc;
+    --accent: #2f5bea; --done: #e9f0ff;
+    --c1: #b45309; --c2: #b91c1c; --c3: #7c3aed; --c4: #0f766e; --c5: #475569;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --card: #1d1d20; --ink: #ececef; --muted: #9a9aa2; --line: #2e2e33;
+      --accent: #7c9bff; --done: #1f2740;
+      --c1: #f59e0b; --c2: #f87171; --c3: #a78bfa; --c4: #2dd4bf; --c5: #94a3b8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+           padding: 12px 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  h1 { font-size: 17px; margin: 0; }
+  .bar { flex: 1; min-width: 140px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+  .stat { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+  .stat b { color: var(--ink); }
+  main { max-width: 860px; margin: 0 auto; padding: 16px; }
+  details.legend { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; }
+  details.legend summary { cursor: pointer; font-weight: 600; }
+  .legend table { border-collapse: collapse; width: 100%; margin-top: 8px; font-size: 14px; }
+  .legend td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  .legend td:first-child { white-space: nowrap; font-weight: 600; }
+  .hint { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+  kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-size: 12px; }
+  .case { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+          outline: none; scroll-margin-top: 80px; }
+  .case.labeled { background: var(--done); }
+  .case:focus-visible, .case.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .case h2 { font-size: 13px; margin: 0 0 4px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .case p { margin: 0 0 12px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opts label { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px;
+                padding: 5px 12px; cursor: pointer; user-select: none; font-size: 14px; background: var(--card); }
+  .opts input { position: absolute; opacity: 0; pointer-events: none; }
+  .opts label .k { font-size: 11px; color: var(--muted); }
+  .opts input:focus-visible + span { text-decoration: underline; }
+  .opts label:has(input:checked) { color: #fff; border-color: transparent; }
+  .opts label:has(input:checked) .k { color: rgba(255,255,255,.8); }
+  .opts label.o1:has(input:checked) { background: var(--c1); }
+  .opts label.o2:has(input:checked) { background: var(--c2); }
+  .opts label.o3:has(input:checked) { background: var(--c3); }
+  .opts label.o4:has(input:checked) { background: var(--c4); }
+  .opts label.o5:has(input:checked) { background: var(--c5); }
+  section.out { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 24px 0 48px; }
+  section.out h2 { font-size: 16px; margin: 0 0 8px; }
+  textarea { width: 100%; height: 260px; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+             background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+  .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+           border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .msg { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Gắn nhãn 20 ca lỗi</h1>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+  <span class="stat"><b id="count">0</b>/20 ca</span>
+  <span class="stat">⏱ <b id="timer">0:00</b> / 8:00</span>
+</header>
+
+<main>
+  <details class="legend" open>
+    <summary>Năm loại lỗi (Google PAIR) · gắn theo nguyên nhân gốc, không theo chỗ cần sửa</summary>
+    <table>
+      <tr><td>1 · Do người dùng</td><td>Người dùng nhập sai hoặc chọn sai. <em>Đầu vào của khách có sai không?</em></td></tr>
+      <tr><td>2 · Hệ thống</td><td>Hệ thống trả lời sai hoặc làm sai so với thiết kế và chính sách. <em>Có vi phạm thiết kế/chính sách, và có người thấy?</em></td></tr>
+      <tr><td>3 · Ngữ cảnh</td><td>Hệ thống làm đúng thiết kế nhưng người dùng thấy là sai, vì giả định không khớp hoàn cảnh. <em>Kết quả đúng, chỉ giả định không khớp?</em></td></tr>
+      <tr><td>4 · Giới hạn hệ thống</td><td>Hệ thống không thể trả lời: thiếu dữ liệu, ngoài phạm vi, đầu vào không xử lý được. <em>Có làm được không, dù có cố gắng?</em></td></tr>
+      <tr><td>5 · Ngầm</td><td>Có sai nhưng cả người dùng lẫn hệ thống đều không nhận ra. <em>Chỉ phát hiện qua kiểm tra mẫu?</em></td></tr>
+    </table>
+    <p class="hint">Phím tắt: <kbd>1</kbd>–<kbd>5</kbd> chọn loại cho ca đang chọn rồi nhảy sang ca chưa gắn · <kbd>↑</kbd>/<kbd>↓</kbd> hoặc <kbd>k</kbd>/<kbd>j</kbd> đổi ca · <kbd>0</kbd> xoá nhãn. Tự lưu trong trình duyệt. Đồng hồ chạy từ lần gắn đầu tiên.</p>
+  </details>
+
+  <div id="cases"></div>
+
+  <section class="out">
+    <h2>Bảng để dán vào mục 4 file cá nhân</h2>
+    <textarea id="md" readonly></textarea>
+    <div class="row">
+      <button class="primary" id="copy">Copy bảng</button>
+      <button id="reset">Xoá hết, gắn lại</button>
+      <span class="msg" id="msg"></span>
+    </div>
+  </section>
+</main>
+
+<script>
+const LOAI = ['Do người dùng', 'Hệ thống', 'Ngữ cảnh', 'Giới hạn hệ thống', 'Ngầm'];
+// Nguồn: docs/Ngay13_Lab13_De_bai_hoc_vien.docx, mục "Hai mươi ca lỗi".
+const CA = [
+  "Khách nhập số tài khoản nhận hoàn tiền thiếu hai chữ số. Trợ lý tạo lệnh hoàn, ngân hàng trả về lỗi.",
+  "Kiện nội địa 28 kg. Trợ lý gọi tool tra bảng giá với tham số hàng thường thay vì hàng nặng, hoàn thiếu 45.000 đ. Khách mở lại sau 2 ngày.",
+  "Theo thiết kế, trợ lý hoàn tiền về ví LogiX trong 5 phút. Khách chờ tiền về tài khoản ngân hàng và báo “chưa được hoàn”.",
+  "Khách yêu cầu hoàn phí cho chặng do hãng nước ngoài giao. LogiX không có dữ liệu chặng này. Trợ lý nói không xác định được trạng thái và chuyển cho nhân viên.",
+  "Kiểm tra mẫu cuối tuần thấy 14 đơn có mã giảm giá bị hoàn theo giá trước giảm, thừa trung bình 12.000 đ mỗi đơn. Không khách nào báo, không cảnh báo nào kích.",
+  "Khách chọn mục “Hoàn phí giao trễ” nhưng nội dung mô tả hàng bị vỡ. Trợ lý xử lý theo luồng giao trễ và từ chối vì đơn giao đúng hạn.",
+  "API sổ cái trả lỗi 503 ở bước ghi hoàn tiền. Trợ lý thử lại 3 lần rồi vẫn báo khách “đã hoàn tiền thành công”.",
+  "Trợ lý dẫn “Điều 7.2 chính sách hoàn phí” làm căn cứ. Bản chính sách hiện hành không có điều 7.2. Số tiền hoàn vẫn đúng.",
+  "Khách nhập mã đơn của sàn thương mại điện tử thay vì mã vận đơn. Trợ lý báo “mã không hợp lệ” rồi dừng, không gợi ý gì.",
+  "Đơn giao trễ do bão. Trợ lý từ chối hoàn theo điều khoản bất khả kháng, đúng chính sách. Khách thấy vô lý vì ứng dụng vẫn hiện “cam kết giao 24 giờ”.",
+  "Khách gửi tin nhắn thoại 40 giây. Trợ lý không xử lý được âm thanh, trả lời “vui lòng nhập bằng chữ”.",
+  "Tool tra đơn của depot D05 trả thiếu một trường. Trợ lý vẫn ra kết quả đúng sau nhiều lần gọi, nên tiền token của D05 gấp 3 lần depot khác suốt 3 tuần mà không ai thấy.",
+  "Khách hỏi hoàn phí bảo hiểm hàng hoá, sản phẩm của công ty bảo hiểm đối tác, ngoài phạm vi trợ lý. Trợ lý trả lời chung chung về phí vận chuyển, không nói rõ là mình không xử lý được.",
+  "Khách bấm nhầm “Xác nhận đã nhận tiền” khi chưa nhận. Yêu cầu bị đóng.",
+  "Đơn trễ 26 giờ. Chính sách: trễ 24–48 giờ hoàn 50%. Trợ lý tính hoàn 100%. Nhân viên xem lại bắt được trước khi gửi.",
+  "Theo thiết kế “gửi ngay khi xong”, trợ lý gửi thông báo hoàn tiền qua Zalo lúc 2:14 sáng. Khách phản ánh bị làm phiền.",
+  "Bảng giá đổi từ ngày 01/11 nhưng trợ lý vẫn dùng bản cũ trong bộ nhớ đệm cho đơn dưới 2 kg. Lệch 1.000–2.000 đ mỗi đơn, 212 đơn trong 9 ngày, không ai mở lại.",
+  "Trợ lý tính đúng: phí giao 30.000 đ, hoàn 50%. Tin nhắn chỉ ghi “Đã hoàn 15.000 đ”, không kèm cách tính. Khách cho là hoàn thiếu và mở lại yêu cầu.",
+  "Khách yêu cầu hoàn phí cho đơn từ 14 tháng trước. Trợ lý chỉ truy cập được dữ liệu 12 tháng. Trợ lý nói rõ không tra được và chuyển cho nhân viên kèm tóm tắt.",
+  "Khách gửi lại yêu cầu sau 10 phút vì chưa thấy phản hồi. Trợ lý hoàn hai lần cho cùng một đơn vì lệnh thứ hai không có khoá chống trùng.",
+];
+
+const KEY = 'lab13-label-tool';
+let state = { labels: Array(20).fill(null), start: null };
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.labels && s.labels.length === 20) state = s; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+const box = document.getElementById('cases');
+CA.forEach((text, i) => {
+  const el = document.createElement('article');
+  el.className = 'case'; el.tabIndex = 0; el.id = 'ca' + (i + 1);
+  el.innerHTML = `<h2>Ca ${i + 1}</h2><p></p><div class="opts" role="radiogroup" aria-label="Nhãn ca ${i + 1}">` +
+    LOAI.map((l, j) => `<label class="o${j + 1}"><input type="radio" name="c${i}" value="${j}"><span>${l}</span><span class="k">${j + 1}</span></label>`).join('') +
+    `</div>`;
+  el.querySelector('p').textContent = text;
+  el.addEventListener('change', e => setLabel(i, +e.target.value, false));
+  el.addEventListener('focus', () => setActive(i));
+  box.appendChild(el);
+});
+const cards = [...box.children];
+
+let active = 0;
+function setActive(i, scroll) {
+  active = Math.max(0, Math.min(19, i));
+  cards.forEach((c, j) => c.classList.toggle('active', j === active));
+  if (scroll) { cards[active].focus({ preventScroll: true }); cards[active].scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}
+
+function setLabel(i, j, advance) {
+  if (j !== null && state.start === null) state.start = Date.now();
+  state.labels[i] = j;
+  save(); render();
+  if (advance && j !== null) {
+    const next = state.labels.findIndex((v, k) => v === null && k > i);
+    const first = state.labels.indexOf(null);
+    setActive(next !== -1 ? next : first !== -1 ? first : i, true);
+  }
+}
+
+function render() {
+  state.labels.forEach((v, i) => {
+    cards[i].classList.toggle('labeled', v !== null);
+    cards[i].querySelectorAll('input').forEach(r => { r.checked = v !== null && +r.value === v; });
+  });
+  const n = state.labels.filter(v => v !== null).length;
+  document.getElementById('count').textContent = n;
+  document.getElementById('bar').style.width = (n / 20 * 100) + '%';
+  document.getElementById('md').value = '| Ca | Nhãn |\n| --: | --- |\n' +
+    state.labels.map((v, i) => `| ${i + 1} | ${v === null ? '' : LOAI[v]} |`).join('\n') + '\n';
+  document.getElementById('msg').textContent = n < 20 ? `Còn ${20 - n} ca chưa gắn.` : 'Đủ 20 ca. Copy bảng, dán vào mục 4, commit và push trước khi xem nhãn của người kia.';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.target.tagName === 'TEXTAREA') return;
+  if (e.key >= '1' && e.key <= '5') { setLabel(active, +e.key - 1, true); e.preventDefault(); }
+  else if (e.key === '0' || e.key === 'Backspace') { setLabel(active, null, false); e.preventDefault(); }
+  else if (e.key === 'ArrowDown' || e.key === 'j') { setActive(active + 1, true); e.preventDefault(); }
+  else if (e.key === 'ArrowUp' || e.key === 'k') { setActive(active - 1, true); e.preventDefault(); }
+});
+
+document.getElementById('copy').onclick = async () => {
+  const ta = document.getElementById('md');
+  try { await navigator.clipboard.writeText(ta.value); }
+  catch (e) { ta.select(); document.execCommand('copy'); }
+  document.getElementById('msg').textContent = 'Đã copy bảng.';
+};
+document.getElementById('reset').onclick = () => {
+  if (!confirm('Xoá hết 20 nhãn và đồng hồ?')) return;
+  state = { labels: Array(20).fill(null), start: null }; save(); render(); setActive(0, true);
+};
+
+setInterval(() => {
+  const s = state.start === null ? 0 : Math.floor((Date.now() - state.start) / 1000);
+  const t = document.getElementById('timer');
+  t.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  t.style.color = s > 480 ? 'var(--c2)' : '';
+}, 1000);
+
+render(); setActive(state.labels.indexOf(null) === -1 ? 0 : state.labels.indexOf(null));
+</script>
+</body>
+</html>
