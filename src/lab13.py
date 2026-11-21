@@ -167,11 +167,54 @@ def nhiem_vu_E1(reqs):
 
 
 # ---------- Nhiệm vụ D1 · Cỡ mẫu (ntphong4044 phụ trách, xem AGENTS.md) ----------
-# TODO CP4: năm câu D1 và tỉ lệ mo_lai_trong_7_ngay hiện tại; in kết quả.
-#   from statsmodels.stats.proportion import proportion_effectsize
-#   from statsmodels.stats.power import NormalIndPower
+# Baseline 0,70; mục tiêu +5 điểm; alpha 0,05; power 0,8; ICC 0,02.
+ALPHA, POWER, ICC = 0.05, 0.8, 0.02
+
+
+def co_mau(p1, p2, alpha=ALPHA, power=POWER):
+    """Cỡ mẫu mỗi nhóm khi so hai tỉ lệ (dùng z chính xác qua NormalDist)."""
+    from statistics import NormalDist
+    za, zb = NormalDist().inv_cdf(1 - alpha / 2), NormalDist().inv_cdf(power)
+    pb = (p1 + p2) / 2
+    return math.ceil((za * math.sqrt(2 * pb * (1 - pb))
+                      + zb * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2
+                     / (p2 - p1) ** 2)
+
+
+def he_so_thiet_ke(m, icc=ICC):
+    """DE = 1 + (m - 1) * ICC, với m là số yêu cầu mỗi cụm."""
+    return 1 + (m - 1) * icc
+
+
 def nhiem_vu_D(reqs):
-    raise NotImplementedError('VIẾT Ở ĐÂY')
+    """In năm câu D1, tỉ lệ mo_lai_trong_7_ngay hiện tại; trả về dict để đối chiếu."""
+    n_yeu_cau = co_mau(0.70, 0.75)                 # a) chia theo yêu cầu
+    de_b = he_so_thiet_ke(75)                       # b) theo nhân viên, m = 75
+    n_b = math.ceil(n_yeu_cau * de_b)
+    toi_da_c = int(20 / ICC)                        # c) 20 nhân viên mỗi nhóm: c / ICC
+    toi_da_d = int(6 / ICC)                         # d) 6 depot mỗi nhóm: c / ICC
+    n_6diem = co_mau(0.70, 0.76)                    # e) mức chênh 6 điểm
+    # e) giải 20m / (1 + (m - 1)*ICC) >= n_6diem  ->  m tối thiểu
+    m_min = math.ceil((n_6diem * (1 - ICC)) / (20 - n_6diem * ICC))
+    de_e = he_so_thiet_ke(m_min)
+
+    mo_lai_tong = (reqs['mo_lai_trong_7_ngay'] == 1).mean()
+    trong_pham_vi = reqs[reqs['loai'].isin(['noi_dia', 'hang_nang'])]
+    mo_lai_pham_vi = (trong_pham_vi['mo_lai_trong_7_ngay'] == 1).mean()
+
+    print('\n--- Nhiệm vụ D1 · Cỡ mẫu ---')
+    print(f'a) Chia theo yêu cầu:            {n_yeu_cau:>6,} / nhóm')
+    print(f'b) Theo nhân viên, m=75 (DE={de_b:.2f}): {n_b:>6,} / nhóm '
+          f'-> {math.ceil(n_b / 75)} người/nhóm, tổng {2 * math.ceil(n_b / 75)} > 40: KHÔNG đủ người')
+    print(f'c) 20 nhân viên/nhóm (c/ICC):    {toi_da_c:>6,} tối đa < {n_yeu_cau:,}: KHÔNG đạt')
+    print(f'd) 6 depot/nhóm (c/ICC):         {toi_da_d:>6,} tối đa')
+    print(f'e) Mức chênh 6 điểm:             {n_6diem:>6,} / nhóm; '
+          f'20 người/nhóm cần m>={m_min} yêu cầu/người (DE={de_e:.2f})')
+    print(f'\nmo_lai_trong_7_ngay hiện tại: toàn mẫu {mo_lai_tong:.2%}, '
+          f'phạm vi noi_dia+hang_nang {mo_lai_pham_vi:.2%}')
+    return dict(n_yeu_cau=n_yeu_cau, de_b=de_b, n_b=n_b, toi_da_c=toi_da_c,
+                toi_da_d=toi_da_d, n_6diem=n_6diem, m_min=m_min, de_e=de_e,
+                mo_lai_tong=mo_lai_tong, mo_lai_pham_vi=mo_lai_pham_vi)
 
 
 if __name__ == '__main__':
