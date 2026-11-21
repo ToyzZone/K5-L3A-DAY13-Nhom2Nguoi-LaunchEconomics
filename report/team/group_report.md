@@ -22,7 +22,7 @@ Dựng hồ sơ launch v0 cho trợ lý hoàn phí LogiX-VN và bảo vệ trư�
 
 ## 4. Kết quả
 
-- Chi phí mỗi việc thành công: 4.472 đ [simulated], gấp 16,3 lần hoá đơn token chia số yêu cầu; giờ nhân viên chiếm 92,5% chi phí.
+- Chi phí mỗi việc thành công: 4.472 đ [simulated], gấp 16,3 lần hoá đơn token chia số yêu cầu [simulated]; giờ nhân viên chiếm 92,5% chi phí [simulated].
 - Ba yếu tố nhạy nhất: số ca làm lại (+51,8%), tỉ lệ xem lại (+40,7%), lương nhân viên (+23,1%) [simulated].
 - So với nhân viên tự làm: cả hệ thống 5.865 đ/yêu cầu = 0,49× của 12.000 đ [simulated].
 - Chỉ số đợt chạy thử: chính 82,83%, bỏ qua gợi ý 27,12%, lỗi lọt đến khách 4,25%.
