@@ -152,6 +152,20 @@ def nhiem_vu_B(runs, reqs):
               f', hoà vốn khi xem lại ≤ {hoa_von:.1f} phút [simulated]')
 
 
+# ---------- Nhiệm vụ E1 · Tính thử ba chỉ số ----------
+def nhiem_vu_E1(reqs):
+    chinh = (reqs['dong_trong_24h'] == 1) & (reqs['mo_lai_trong_7_ngay'] == 0)
+    xem = reqs[reqs['duoc_xem_lai'] == 1]
+    bo_qua = xem['quyet_dinh_xem_lai'].isin(['sua', 'bo'])
+    mo_lai = reqs['mo_lai_trong_7_ngay'] == 1
+    print(f'\nE1 · chính {chinh.mean():.2%} ({chinh.sum()}/{len(reqs)})'
+          f' · dùng (bỏ qua gợi ý) {bo_qua.mean():.2%} ({bo_qua.sum()}/{len(xem)})'
+          f' · an toàn (mở lại 7 ngày) {mo_lai.mean():.2%} ({mo_lai.sum()}/{len(reqs)})')
+    pv = reqs[reqs['loai'].isin(PHAM_VI)]
+    print(f'Tỉ lệ làm lại trong phạm vi {(pv["ket_qua"] == "lam_lai").mean():.2%}'
+          f' · tỉ lệ được xem lại {reqs["duoc_xem_lai"].mean():.2%}')
+
+
 # ---------- Nhiệm vụ D1 · Cỡ mẫu (ntphong4044 phụ trách, xem AGENTS.md) ----------
 # TODO CP4: năm câu D1 và tỉ lệ mo_lai_trong_7_ngay hiện tại; in kết quả.
 #   from statsmodels.stats.proportion import proportion_effectsize
@@ -169,4 +183,5 @@ if __name__ == '__main__':
         print(f'{ten:15s} {gia_tri:>14,.1f}')
     nhiem_vu_A3_A4(runs, reqs)
     nhiem_vu_B(runs, reqs)
+    nhiem_vu_E1(reqs)
     nhiem_vu_D(reqs)  # TODO CP4 · Nhiệm vụ D: viết trong hàm nhiem_vu_D ở trên.
