@@ -6,7 +6,7 @@
 - MSSV: 2A202603712
 - Email: 26ai.phongnt6@vinuni.edu.vn
 - GitHub: [ntphong4044](https://github.com/ntphong4044)
-- Vai trong nhóm: người viết code phần D + gắn nhãn 2 (C) + giữ hồ sơ
+- Vai trong nhóm (người viết code, người kiểm số, người gắn nhãn 1, người gắn nhãn 2 kiêm giữ hồ sơ): Người viết code (D) · người gắn nhãn 2 kiêm giữ hồ sơ · người kiểm số cho A, B
 
 Nhóm có 2 người, chia theo chủ file để mỗi người làm độc lập (chi tiết trong `AGENTS.md`). Người viết code đổi sau giờ giải lao (A, B do `ToyzZone` viết, D do tôi viết), nên cả hai người đều tự tay tính được số.
 
