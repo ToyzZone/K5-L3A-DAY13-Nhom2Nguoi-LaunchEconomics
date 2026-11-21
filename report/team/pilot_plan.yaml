@@ -30,7 +30,7 @@ pilot:
     unit: "staff"
     control_share: 0.5
     randomized: true
-  rollout: [0.10, 0.25, 0.50]     # 4 -> 10 -> 20 nhân viên mỗi nhóm; mỗi bước một tuần
+  rollout: [0.10, 0.25, 0.50]     # 4 -> 10 -> 20 nhân viên mỗi nhóm; bước 0,10 và 0,25 mỗi bước 1 tuần; bước 0,50 ít nhất 10 ngày vì m >= 299 yêu cầu/người, mỗi người ~31 yêu cầu trong phạm vi/ngày (1.500 ÷ 40 × 982/1.200)
   primary_metric:
     name: dong_trong_24h_khong_mo_lai_7_ngay
     baseline: 0.70
