@@ -16,7 +16,7 @@ Viết "chỉ số trong đợt chạy thử là …", không viết "trợ lý 
 
 ## Danh sách event
 
-Mỗi event có `trace_id` để nối với trace của agent (`logix_runs.csv`).
+Mỗi event có `trace_id` để nối với trace của agent (`logix_runs.csv`). 12 event.
 
 | Event | Ai tạo | Thuộc tính chính | Thời điểm |
 | --- | --- | --- | --- |
@@ -26,6 +26,8 @@ Mỗi event có `trace_id` để nối với trace của agent (`logix_runs.csv`
 | `staff_review_decision` | Nhân viên | request_id, staff_id, quyet_dinh (giu/sua/bo), phut_xem_lai (đo thật), trace_id | Khi nhân viên bấm gửi, sửa hoặc bỏ |
 | `staff_rework_completed` | Nhân viên | request_id, phut_lam_lai, ly_do, trace_id | Khi làm lại xong |
 | `handoff_to_staff` | Agent | request_id, reason, tom_tat, trace_id | Khi agent chuyển yêu cầu cho nhân viên |
+| `input_validation_failed` | Agent | request_id, truong_loi (vd. ma_van_don), gia_tri_nhap, trace_id | Khi đầu vào của khách không hợp lệ |
+| `customer_notification_sent` | Agent | request_id, kenh, noi_dung (vd. da_hoan), so_tien, trace_id | Khi gửi thông báo kết quả cho khách |
 | `refund_ledger_write` | Dịch vụ sổ cái | request_id, idempotency_key, so_tien, ket_qua, trace_id | Khi ghi sổ hoàn tiền |
 | `ticket_closed` | Hệ thống ticket | request_id, closed_at, trace_id | Khi đóng yêu cầu |
 | `ticket_reopened` | Khách | request_id, reopened_at, reason, trace_id | Khi khách mở lại yêu cầu |
@@ -38,6 +40,7 @@ Mỗi event có `trace_id` để nối với trace của agent (`logix_runs.csv`
 - An toàn, lỗi lọt đến khách: `ticket_reopened` trong 7 ngày sau `ticket_closed`, chia `refund_request_created`.
 - Dùng, tự đề xuất: `agent_suggestion_shown` chia `refund_request_created` thuộc nhánh có trợ lý.
 - An toàn, tự đề xuất: `audit_sample_checked` có so_tien_da_hoan ≠ so_tien_dung, chia số `audit_sample_checked`.
+- Cách phát hiện trong bảng khắc phục (`bang_loi.md`): ca 9 dùng `input_validation_failed`; ca 7 đối soát `customer_notification_sent` có noi_dung = da_hoan với `refund_ledger_write` cùng `trace_id`; ca 18 dùng `ticket_reopened` (reason) và `audit_sample_checked`; ca 4 dùng `handoff_to_staff` (reason); ca 17 dùng `audit_sample_checked`.
 - Chi phí (để kiểm lại bảng độ nhạy trong pilot): token, tool từ `agent_run_completed`; phút xem lại từ `staff_review_decision`; phút làm lại từ `staff_rework_completed`; mẫu số từ `refund_ledger_write` có ket_qua thành công.
 
 ## E2 · Rủi ro kinh tế
