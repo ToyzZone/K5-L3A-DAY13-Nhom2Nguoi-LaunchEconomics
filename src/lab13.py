@@ -101,6 +101,57 @@ def nhiem_vu_A3_A4(runs, reqs):
               f'  cps+cố định {pv["cps"] + co_dinh:6,.0f} = {(pv["cps"] + co_dinh) / BASELINE:.2f}x')
 
 
+# ---------- Nhiệm vụ B · Bảng độ nhạy (mọi cps ở đây là simulated) ----------
+KICH_BAN = {
+    'Giá token gấp đôi':      dict(gia_vao=52, gia_ra=260),
+    'Giá token giảm một nửa': dict(gia_vao=13, gia_ra=65),
+    'Xem lại gấp đôi':        dict(he_so_xem_lai=2),
+    'Xem lại giảm một nửa':   dict(he_so_xem_lai=0.5),
+    'Làm lại gấp đôi':        dict(he_so_lam_lai=2),
+    'Làm lại giảm một nửa':   dict(he_so_lam_lai=0.5),
+    'Lương tăng 25%':         dict(luong_phut=2500),
+    'Tối đa 2 lần chạy':      dict(max_lan_chay=2),
+    'Chỉ 1 lần chạy':         dict(max_lan_chay=1),
+}
+
+
+def nhiem_vu_B(runs, reqs):
+    goc = mo_hinh(runs, reqs)['cps']
+    doi = {ten: mo_hinh(runs, reqs, **kw)['cps'] / goc - 1 for ten, kw in KICH_BAN.items()}
+    print(f'\nB1 · gốc {goc:,.0f}')
+    for ten, d in doi.items():
+        print(f'{ten:24s} {goc * (1 + d):8,.0f} {d:+7.1%}')
+    # Tự kiểm tra: mô hình tuyến tính nên "giảm một nửa" = −½ "gấp đôi".
+    for a, b in [('Giá token gấp đôi', 'Giá token giảm một nửa'), ('Xem lại gấp đôi', 'Xem lại giảm một nửa'),
+                 ('Làm lại gấp đôi', 'Làm lại giảm một nửa')]:
+        assert abs(doi[b] + doi[a] / 2) < 1e-9, (a, b)
+
+    cap = mo_hinh(runs, reqs, gia_vao=52, gia_ra=260, he_so_xem_lai=2)['cps'] / goc - 1
+    assert abs(cap - doi['Giá token gấp đôi'] - doi['Xem lại gấp đôi']) < 1e-9
+    print(f'B2 · token × 2 + xem lại × 2: {goc * (1 + cap):,.0f} {cap:+.1%} (= tổng hai tác động riêng)')
+
+    print('\nB3 · giới hạn  tổng trợ lý  không TC  cả hệ thống      cps')
+    for k in (1, 2, 3):
+        kq = mo_hinh(runs, reqs, max_lan_chay=k)
+        khong_tc = len(reqs) - kq['thanh_cong']   # nhân viên làm thay, 12.000 đ mỗi yêu cầu
+        print(f'{k:>12d} {kq["tong"]:12,.0f} {khong_tc:9d} {kq["tong"] + khong_tc * BASELINE:12,.0f} {kq["cps"]:8,.0f}')
+
+    # B4: xem lại 100% trong phạm vi; 5 phút mỗi yêu cầu có ít nhất một lần chạy ok, làm lại 9 phút mỗi ca (đề bài).
+    pv = reqs[reqs['loai'].isin(PHAM_VI)]
+    r = runs[runs['request_id'].isin(pv['request_id'])]
+    co_ok = r.loc[r['status'] == 'ok', 'request_id'].nunique()
+    ca_lam_lai = (pv['ket_qua'] == 'lam_lai').sum()
+    may = (r['tokens_in'] / 1000 * GIA_VAO + r['tokens_out'] / 1000 * GIA_RA + r['tool_calls'] * GIA_TOOL).sum()
+    thanh_cong = (pv['ket_qua'] == 'thanh_cong').sum()
+    phut_tb = reqs.loc[reqs['ket_qua'] == 'lam_lai', 'phut_lam_lai_simulated'].mean()
+    print(f'\nB4 · {len(pv)} yc, {co_ok} có lần ok, {ca_lam_lai} ca làm lại, token+tool {may:,.0f}, {thanh_cong} thành công')
+    for phut_lam_lai in (9, phut_tb):
+        tong = co_ok * 5 * LUONG_PHUT + ca_lam_lai * phut_lam_lai * LUONG_PHUT + may
+        hoa_von = (BASELINE * thanh_cong - may - ca_lam_lai * phut_lam_lai * LUONG_PHUT) / (co_ok * LUONG_PHUT)
+        print(f'làm lại {phut_lam_lai:4.1f} phút: tổng {tong:,.0f}, cps {tong / thanh_cong:,.0f} = {tong / thanh_cong / BASELINE:.2f}x'
+              f', hoà vốn khi xem lại ≤ {hoa_von:.1f} phút [simulated]')
+
+
 # ---------- Nhiệm vụ D1 · Cỡ mẫu (ntphong4044 phụ trách, xem AGENTS.md) ----------
 # TODO CP4: năm câu D1 và tỉ lệ mo_lai_trong_7_ngay hiện tại; in kết quả.
 #   from statsmodels.stats.proportion import proportion_effectsize
@@ -117,5 +168,5 @@ if __name__ == '__main__':
     for ten, gia_tri in ket_qua.items():
         print(f'{ten:15s} {gia_tri:>14,.1f}')
     nhiem_vu_A3_A4(runs, reqs)
-    # TODO CP2 · Nhiệm vụ B: đổi từng yếu tố, ghi vào bảng độ nhạy.
+    nhiem_vu_B(runs, reqs)
     nhiem_vu_D(reqs)  # TODO CP4 · Nhiệm vụ D: viết trong hàm nhiem_vu_D ở trên.
