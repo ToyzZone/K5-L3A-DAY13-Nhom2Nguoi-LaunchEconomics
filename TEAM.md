@@ -49,7 +49,7 @@ Sao chép mục dưới đây cho từng thành viên.
 
 - Mô hình chi phí từ trace: chi phí mỗi việc thành công 4.472 đ [simulated], gấp 16,3 lần hoá đơn chia số yêu cầu; chi phí cả hệ thống 5.865 đ/yêu cầu = 0,49× [simulated]
 - Tách theo loại, đề xuất phạm vi noi_dia + hang_nang (quoc_te 1,88× [simulated], chạy lại không giúp); bảng độ nhạy B1–B4
-- Ba chỉ số tính thử, 10 event có trace_id, 4 dòng rủi ro kinh tế
+- Ba chỉ số tính thử, 12 event có trace_id, 4 dòng rủi ro kinh tế
 
 ### Bằng chứng
 

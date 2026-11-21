@@ -42,7 +42,7 @@ Mọi con số trong hồ sơ lấy từ output `src/lab13.py`, hoặc tính tay
 
 - Số tính từ cột `_simulated` mang nhãn `simulated`.
 - Người phụ trách là một vai trò cụ thể, ví dụ "PM trợ lý hoàn phí", "Giám đốc vận hành".
-- Gọi đợt triển khai là "pilot" hoặc "đợt chạy thử"; `grep -rni production report/team` phải không in gì.
+- Gọi đợt triển khai là "pilot" hoặc "đợt chạy thử"; tìm từ bị cấm ở quy tắc 5 của README trong `report/team` phải không ra dòng nào.
 
 ## Git
 
