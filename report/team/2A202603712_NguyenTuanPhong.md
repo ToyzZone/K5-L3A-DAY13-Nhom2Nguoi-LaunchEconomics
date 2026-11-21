@@ -4,7 +4,7 @@
 
 - Họ tên: Nguyễn Tuấn Phong
 - MSSV: 2A202603712
-- Email: 26ai.phongnt@vinuni.edu.vn
+- Email: 26ai.phongnt6@vinuni.edu.vn
 - GitHub: [ntphong4044](https://github.com/ntphong4044)
 - Vai trong nhóm: người viết code phần D + gắn nhãn 2 (C) + giữ hồ sơ
 
