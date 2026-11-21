@@ -63,7 +63,7 @@ Commit chính của tôi trên `main`:
 
 - Claude Code: đọc đề và `AGENTS.md`, viết hàm `nhiem_vu_D` trong `src/lab13.py`, điền `pilot_plan.yaml`, `bang_loi.md`, `ho_so_launch_v0.md`, `group_report.md`.
 - Không dùng AI để gắn nhãn 20 ca: nhãn ở mục 4 do tôi tự gắn, commit trước khi xem nhãn của người kia.
-- Cách tự kiểm tra: chạy `python -c "import pandas as pd, lab13; lab13.nhiem_vu_D(pd.read_csv('logix_requests.csv', keep_default_na=False))"`, đối chiếu với số tham khảo trong hướng dẫn chi tiết (1.251 · 3.103 · 1.000 · 300 · 859 · m≥299 · DE 6,96 · 4,25% · 3,97%, khớp đúng); `python -c "import yaml; yaml.safe_load(open('../report/team/pilot_plan.yaml'))"` chạy không lỗi và không còn dấu `?`; `grep -rni production report/team` không in gì.
+- Cách tự kiểm tra: chạy `python -c "import pandas as pd, lab13; lab13.nhiem_vu_D(pd.read_csv('logix_requests.csv', keep_default_na=False))"`, đối chiếu với số tham khảo trong hướng dẫn chi tiết (1.251 · 3.103 · 1.000 · 300 · 859 · m≥299 · DE 6,96 · 4,25% · 3,97%, khớp đúng); `python -c "import yaml; yaml.safe_load(open('../report/team/pilot_plan.yaml'))"` chạy không lỗi và không còn dấu `?`; tìm từ bị cấm ở quy tắc 5 của README trong `report/team` không ra dòng nào.
 
 ## 6. Tự đánh giá
 
