@@ -49,8 +49,8 @@ Mọi con số trong hồ sơ lấy từ output `src/lab13.py`, hoặc tính tay
 Làm thẳng trên `main`, chỉ `git add` file mình là chủ:
 
 ```bash
-git pull --rebase origin main
 git add <file của mình>
 git commit -m "<mô tả ngắn>"
+git pull --rebase origin main
 git push origin main
 ```
