@@ -37,16 +37,16 @@ Commit, file, bảng hoặc con số do tôi làm.
 
 | Ca | Nhãn | Ca | Nhãn |
 | --: | --- | --: | --- |
-| 1 | ... | 11 | ... |
-| 2 | ... | 12 | ... |
-| 3 | ... | 13 | ... |
-| 4 | ... | 14 | ... |
-| 5 | ... | 15 | ... |
-| 6 | ... | 16 | ... |
-| 7 | ... | 17 | ... |
-| 8 | ... | 18 | ... |
-| 9 | ... | 19 | ... |
-| 10 | ... | 20 | ... |
+| 1 | Do người dùng | 11 | Giới hạn hệ thống |
+| 2 | Hệ thống | 12 | Ngầm |
+| 3 | Ngữ cảnh | 13 | Giới hạn hệ thống |
+| 4 | Giới hạn hệ thống | 14 | Do người dùng |
+| 5 | Ngầm | 15 | Hệ thống |
+| 6 | Do người dùng | 16 | Ngữ cảnh |
+| 7 | Hệ thống | 17 | Ngầm |
+| 8 | Hệ thống | 18 | Ngữ cảnh |
+| 9 | Do người dùng | 19 | Giới hạn hệ thống |
+| 10 | Ngữ cảnh | 20 | Hệ thống |
 
 - Commit: ...
 
