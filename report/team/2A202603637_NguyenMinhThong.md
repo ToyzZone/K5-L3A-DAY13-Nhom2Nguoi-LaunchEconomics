@@ -17,7 +17,7 @@ Nhóm có 2 người, chia theo chủ file để mỗi người làm độc lậ
 | A (CP1) | Ba hàm A1, `mo_hinh` (A2), tách theo loại (A3), chi phí cố định (A4); điền bảng | `src/lab13.py`, `report/team/bang_chi_phi.md` |
 | B (CP2) | 9 kịch bản B1, cặp B2, giới hạn chạy B3, xem lại 100% B4; điền bảng | `src/lab13.py`, `report/team/bang_chi_phi.md` |
 | C (CP3) | Người gắn nhãn 1: gắn độc lập 20 ca vào mục 4 của file này, push trước khi so với người gắn nhãn 2 | file này |
-| D (CP4) | Người kiểm số: tính tay lại năm câu D1 để đối chiếu với `nhiem_vu_D` | file này, mục 4 |
+| D (CP4) | Người kiểm số: tính lại năm câu D1 bằng công thức để đối chiếu với `nhiem_vu_D` | file này, mục 4 |
 | E1–E2 (CP5) | Đặc tả và tính thử chỉ số, danh sách event, rủi ro kinh tế (lấy số từ bảng độ nhạy) | `src/lab13.py`, `report/team/chi_so.md` |
 | Chung | Thông tin nhóm, vai và đóng góp | `TEAM.md` |
 
@@ -28,7 +28,7 @@ Nhóm có 2 người, chia theo chủ file để mỗi người làm độc lậ
 - A3, A4: quoc_te 22.515 đ = 1,88× [simulated], tỉ lệ ok lần 1/2/3 là 30,0% / 11,4% / 2,2% nên chạy lại không giúp; đề xuất phạm vi noi_dia + hang_nang. Cộng chi phí cố định: 4.599 đ = 0,38× ở 45.000 yêu cầu/tháng [simulated].
 - B: bảng độ nhạy 9 kịch bản, xếp hạng làm lại > xem lại > lương; giới hạn 2 lần chạy rẻ nhất cho công ty (6.901.220 đ [simulated]); xem lại 100% đẩy lên 0,98–1,03× [simulated].
 - C: gắn nhãn 1 cho 20 ca; dựng `label_tool.html` (không chứa nhãn tham khảo) để cả hai người gắn nhãn dùng.
-- D: kiểm số năm câu D1 bằng công thức tay, khớp với `nhiem_vu_D` (mục 4).
+- D: kiểm số năm câu D1 bằng công thức so sánh hai tỉ lệ (cùng Claude Code), khớp đúng với `nhiem_vu_D` (mục 4). Nhãn thống nhất của bảng lỗi khớp 20/20 với nhãn tham khảo (đối chiếu sau khi cả hai bộ nhãn đã push).
 - E1, E2: ba chỉ số tính thử (82,83% · 27,12% · 4,25%), danh sách event có `trace_id`, 4 dòng rủi ro kinh tế lấy số từ bảng độ nhạy.
 
 ## 4. Bằng chứng
@@ -80,20 +80,20 @@ Sau khi so: trùng 16/20 = 80%, lệch ở ca 2, 3, 8, 13; nhóm chốt theo nh�
 
 ### Kiểm số D1
 
-Tính tay bằng công thức hai tỉ lệ (n = 2·((z₀,₉₇₅ + z₀,₈) / h)², h là hiệu arcsin), không dùng statsmodels:
+Tính lại bằng công thức so sánh hai tỉ lệ (sai số chuẩn gộp dưới H0, riêng dưới H1; alpha 0,05, power 0,8), không dùng statsmodels:
 
-| Câu | `nhiem_vu_D` | Tính tay | Ghi chú |
-| --- | ---: | ---: | --- |
-| a · theo yêu cầu, mức chênh 5 điểm | 1.251 | 1.250 | làm tròn |
-| b · theo nhân viên, m = 75, DE 2,48 | 3.103 → 84 người | 3.100 → 84 người | > 40 người: không đủ |
-| c · 20 nhân viên mỗi nhóm, c/ICC | 1.000 | 1.000 | < 1.251 |
-| d · 6 depot mỗi nhóm, c/ICC | 300 | 300 | |
-| e · mức chênh 6 điểm | 859, m ≥ 299 | 858, m ≥ 297 | lệch do làm tròn n, dưới 1% |
+| Câu | `nhiem_vu_D` | Tính lại | Kết quả |
+| --- | ---: | --- | --- |
+| a · theo yêu cầu, 0,70 → 0,75 | 1.251 | 1.250,7 → 1.251 | khớp |
+| b · theo nhân viên, m = 75 | 3.103 → 84 người | DE = 1 + 74 × 0,02 = 2,48; 1.251 × 2,48 = 3.103 → 42 người/nhóm, 84 | khớp, > 40 người: không đủ |
+| c · 20 nhân viên mỗi nhóm | 1.000 | 20 / 0,02 = 1.000 | khớp, < 1.251 |
+| d · 6 depot mỗi nhóm | 300 | 6 / 0,02 = 300 | khớp |
+| e · mức chênh 6 điểm | 859, m ≥ 299 | 858,3 → 859; m ≥ 859 × 0,98 / (20 − 859 × 0,02) = 298,5 → 299 | khớp |
 
 ## 5. Công cụ AI đã dùng
 
-- Claude Code: đọc đề, đề xuất cách chia việc theo chủ file (`AGENTS.md`); viết code A1, A2, A3, A4, B, E1 trong `src/lab13.py`; điền `bang_chi_phi.md`, `chi_so.md`; dựng `label_tool.html`; sau khi cả hai bộ nhãn đã push, gợi ý quy tắc phân biệt cho 4 ca lệch (nhóm chốt theo nhãn người gắn nhãn 2).
-- Cách tôi kiểm tra: ba phép thử A1 phải ĐẠT; `nhiem_vu_B` có assert "giảm một nửa" = −½ "gấp đôi" và cặp B2 = tổng hai tác động; đối chiếu từng số với số tham khảo trong hướng dẫn chi tiết (A2, A3, A4, B1, B3, E1 khớp đúng; B4 với 15,3 phút ra 12.415 đ so với 12.414 đ vì dùng trung bình chưa làm tròn); tính tay lại D1.
+- Claude Code: đọc đề, đề xuất cách chia việc theo chủ file (`AGENTS.md`); viết code A1, A2, A3, A4, B, E1 trong `src/lab13.py`; điền `bang_chi_phi.md`, `chi_so.md`; đối chiếu số với đáp án tham khảo; tính lại D1 để kiểm số; dựng `label_tool.html`; sau khi cả hai bộ nhãn đã push, gợi ý quy tắc phân biệt cho 4 ca lệch (nhóm chốt theo nhãn người gắn nhãn 2) và rà soát hồ sơ nhóm.
+- Cách kiểm tra: ba phép thử A1 phải ĐẠT; `nhiem_vu_B` có assert "giảm một nửa" = −½ "gấp đôi" và cặp B2 = tổng hai tác động; đối chiếu từng số với số tham khảo trong hướng dẫn chi tiết (A2, A3, A4, B1, B3, E1 khớp đúng; B4 với 15,3 phút ra 12.415 đ so với 12.414 đ vì dùng trung bình chưa làm tròn); D1 tính lại bằng công thức, khớp đúng.
 - Không dùng AI để gắn nhãn 20 ca: nhãn ở mục 4 do tôi tự gắn bằng `label_tool.html`.
 
 ## 6. Tự đánh giá
